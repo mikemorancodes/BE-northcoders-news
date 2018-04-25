@@ -6,20 +6,19 @@ const seedDB = require("../seed/seed");
 const mongoose = require("mongoose");
 const { topicData, articleData, userData } = require("../seed/testData");
 
-describe("/", () => {
+describe("/api", function() {
+  this.timeout(10000);
   beforeEach(() => {
     return seedDB(topicData, articleData, userData);
   });
   after(() => mongoose.disconnect());
-  describe("/api", () => {
-    it("get /actors returns status 200 and all the actors", () => {
+  describe("/topics", () => {
+    it("get /topics returns status 200 and all the topics", () => {
       return request
-        .get(`/api/actors`)
+        .get(`/api/topics`)
         .expect(200)
         .then(({ body }) => {
-          expect(body.actors.length).to.equal(8);
-          expect(body.actors[0].name).to.equal("Amy Adams");
-          expect(body.actors[3]._id).to.be.a("string");
+          expect(body.topics.length).to.equal(2);
         });
     });
   });

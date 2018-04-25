@@ -1,8 +1,7 @@
 const router = require("express").Router();
 const { articlesRouter, commentsRouter, topicsRouter, usersRouter } = require("./");
 
-router.get("/", (req, res, next) => {
-  if (err) next(err);
+router.get("/", (req, res) => {
   res.sendFile(__dirname.replace("routers", "views/home.html"));
 });
 

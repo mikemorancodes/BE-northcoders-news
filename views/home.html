@@ -11,7 +11,26 @@
 <body>
   <h1>Northcoders News</h1>
   <h2>API Endpoints</h2>
-  <h3>Get API topics</h3>
+  <h3>GET /api/topics</h3>
+  <p>Get all the topics.</p>
+  <h3>GET /api/topics/:topic/articles</h3>
+  <p>Return all the articles for a certain topic.</p>
+  <h3>GET /api/articles</h3>
+  <p>Get all the articles.</p>
+  <h3>GET /api/articles/:article_id/comments</h3>
+  <p>Get all the comments for a individual article.</p>
+  <h3>POST /api/articles/:article_id/comments</h3>
+  <p>Add a new comment to an article. This route requires a JSON body with a comment key and value pair
+    <br> e.g: {"comment": "This is my new comment"}</p>
+  <h3>PUT /api/articles/:article_id</h3>
+  <p>Increment or Decrement the votes of a comment by one. This route requires a vote query of 'up' or 'down'
+    <br> e.g: http://northcoders-news-api.herokuapp.com/api/comments/:comment_id?vote=down</p>
+  <h3>DELETE /api/comments/:comment_id</h3>
+  <p>Deletes a comment if the comment was created by the Northcoder user.</p>
+  <h3>GET /api/users/:username</h3>
+  <p>Returns a JSON object with the profile data for the specified user.</p>
+  <h3>GET /api/users/:username/repos</h3>
+  <p>Returns a JSON array with all the public repos of the specified user.</p>
 </body>
 
 </html>
