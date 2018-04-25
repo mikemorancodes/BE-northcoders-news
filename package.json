@@ -5,14 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "nodemon listen.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "ejs": "^2.5.9",
     "express": "^4.14.0",
     "faker": "^4.1.0",
     "lodash": "^4.17.10",
