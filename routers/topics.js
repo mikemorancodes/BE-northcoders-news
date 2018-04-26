@@ -1,10 +1,14 @@
 const router = require("express").Router();
-const { getAllTopics } = require("../controllers/topics");
+const {
+  getAllTopics,
+  getArticlesByTopicId,
+  postNewArticle
+} = require("../controllers/topics");
 
 router.get("/", getAllTopics);
 
-router.get("/:topic_id/articles");
+router.get("/:belongs_to/articles", getArticlesByTopicId);
 
-router.post("/:topic_id/articles");
+router.post("/:belongs_to/articles", postNewArticle);
 
 module.exports = router;

@@ -20,13 +20,16 @@ const createTestComment = (article, user) => {
 };
 
 exports.createComments = (articleDocs, userDocs) => {
-  return articleDocs.reduce((acc, article) => {
-    for (let i = 0; i < 3; i++) {
+  const comments = articleDocs.reduce((acc, article, i) => {
+    const limit = process.env.NODE_ENV ? 3 : random(10);
+    for (let i = 0; i < limit; i++) {
       if (process.env.NODE_ENV) acc.push(createTestComment(article, userDocs[0]));
       else acc.push(createRandomComment(article, userDocs[random(userDocs.length - 1)]));
+      articleDocs[i].comment_count++;
     }
     return acc;
   }, []);
+  return { comments, updatedArticles: articleDocs };
 };
 
 exports.formatArticleData = (articleData, topicRefs, userDocs) => {

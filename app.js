@@ -7,8 +7,6 @@ const bodyParser = require("body-parser");
 
 mongoose.connect(DB_URL).then(() => console.log(`connected to ${DB_URL}`));
 
-app.use(express.static("views"));
-
 app.use(bodyParser.json());
 
 app.use("/api", apiRouter);
@@ -24,6 +22,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err);
   res.status(500).send({ msg: "internal server error" });
 });
 

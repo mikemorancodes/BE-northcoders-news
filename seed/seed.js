@@ -12,15 +12,16 @@ function seedDB(topicData, articleData, userData) {
       console.log(`Inserted ${topicDocs.length} topics and ${userDocs.length} users!`);
       const topicRef = createIdReferenceObject(topicDocs, "slug");
       const formattedArticles = formatArticleData(articleData, topicRef, userDocs);
-      return Promise.all([Article.insertMany(formattedArticles), userDocs]);
+      return Promise.all([Article.insertMany(formattedArticles), userDocs, topicDocs]);
     })
-    .then(([articleDocs, userDocs]) => {
+    .then(([articleDocs, userDocs, topicDocs]) => {
       console.log(`Inserted ${articleDocs.length} articles!`);
-      const comments = createComments(articleDocs, userDocs);
-      return Comment.insertMany(comments);
+      const { comments, updatedArticles } = createComments(articleDocs, userDocs);
+      return Promise.all([Comment.insertMany(comments), updatedArticles, userDocs, topicDocs]);
     })
-    .then(commentDocs => {
-      console.log(`Inserted ${commentDocs.length} comments!`);
+    .then(allDocs => {
+      console.log(`Inserted ${allDocs[0].length} comments!`);
+      return allDocs;
     });
 }
 
