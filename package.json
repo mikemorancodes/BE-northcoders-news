@@ -7,7 +7,7 @@
     "test": "mocha spec/tests.spec.js",
     "dev": "nodemon listen.js",
     "start": "node listen.js",
-    "seed:prod": "node seed/prod.seed.js"
+    "seed:prod": "process.env.NODE_ENV=production node seed/prod.seed.js"
   },
   "author": "",
   "license": "ISC",
