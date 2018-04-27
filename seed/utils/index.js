@@ -20,28 +20,32 @@ const createTestComment = (article, user) => {
 };
 
 exports.createComments = (articleDocs, userDocs) => {
-  const comments = articleDocs.reduce((acc, article, i) => {
-    const limit = process.env.NODE_ENV ? 3 : random(10);
-    for (let i = 0; i < limit; i++) {
-      if (process.env.NODE_ENV) acc.push(createTestComment(article, userDocs[0]));
+  return articleDocs.reduce((acc, article, i) => {
+    for (let i = 0; i < article.comment_count; i++) {
+      if (process.env.NODE_ENV === "test") acc.push(createTestComment(article, userDocs[0]));
       else acc.push(createRandomComment(article, userDocs[random(userDocs.length - 1)]));
-      articleDocs[i].comment_count++;
     }
     return acc;
   }, []);
-  return { comments, updatedArticles: articleDocs };
 };
 
 exports.formatArticleData = (articleData, topicRefs, userDocs) => {
   return articleData.map(article => {
     const { title, body, topic } = article;
-    const userIndex = process.env.NODE_ENV ? 0 : random(userDocs.length - 1);
-    const userId = userDocs[userIndex]._id;
+    let userId, commentCount;
+    if (process.env.NODE_ENV === "test") {
+      userId = userDocs[0]._id;
+      commentCount = 3;
+    } else {
+      userId = userDocs[random(userDocs.length - 1)];
+      commentCount = random(10);
+    }
     return {
       title,
       body,
       belongs_to: topicRefs[topic],
-      created_by: userId
+      created_by: userId,
+      comment_count: commentCount
     };
   });
 };

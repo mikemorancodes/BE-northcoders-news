@@ -9,6 +9,10 @@ const { topicData, articleData, userData } = require("../seed/testData");
 describe("/api", function() {
   this.timeout(10000);
   let commentDocs, articleDocs, userDocs, topicDocs;
+  const articleKeys = ["title", "body", "belongs_to", "votes", "created_by", "comment_count"];
+  const commentKeys = ["body", "belongs_to", "created_at", "votes", "created_by"];
+  const userKeys = ["username", "name", "avatar_url"];
+  const topicKeys = ["title", "slug"];
   beforeEach(() => {
     return seedDB(topicData, articleData, userData).then(
       allDocs => ([commentDocs, articleDocs, userDocs, topicDocs] = allDocs)
@@ -21,8 +25,10 @@ describe("/api", function() {
         .get(`/api/topics`)
         .expect(200)
         .then(({ body: { topics } }) => {
+          const [firstTopic] = topics;
           expect(topics.length).to.equal(2);
-          expect(topics[0].slug).to.equal(topicData[0].slug);
+          expect(firstTopic.slug).to.equal(topicData[0].slug);
+          expect(firstTopic).to.include.keys(...topicKeys);
         });
     });
     it("get /topics/:belongs_to/articles returns all articles for topic", () => {
@@ -31,7 +37,8 @@ describe("/api", function() {
         .get(`/api/topics/${coding._id}/articles`)
         .expect(200)
         .then(({ body: { articles } }) => {
-          expect(articles[0].belongs_to).to.equal(coding._id.toString());
+          expect(articles[0].belongs_to.slug).to.equal("mitch");
+          expect(articles[0].created_by.username).to.equal("butter_bridge");
           expect(articles.length).to.equal(2);
         });
     });
@@ -43,13 +50,12 @@ describe("/api", function() {
         belongs_to: footballId,
         created_by: userDocs[1]._id
       };
-      const expKeys = ["title", "body", "belongs_to", "votes", "created_by"];
       return request
         .post(`/api/topics/${footballId}/articles`)
         .send(testArticle)
         .expect(201)
         .then(({ body: { article } }) => {
-          expect(article).to.include.all.keys(...expKeys);
+          expect(article).to.include.all.keys(...articleKeys);
         });
     });
   });
@@ -66,12 +72,11 @@ describe("/api", function() {
     });
     it("get api/articles/:article_id returns the article specified by id", () => {
       const [testArticle] = articleDocs;
-      const expKeys = ["title", "body", "belongs_to", "votes", "created_by"];
       return request
         .get(`/api/articles/${testArticle._id}`)
         .expect(200)
         .then(({ body: { article } }) => {
-          expect(article).to.include.all.keys(...expKeys);
+          expect(article).to.include.all.keys(...articleKeys);
           expect(article.created_by.name).to.equal("jonny");
           expect(article.belongs_to.slug).to.equal("mitch");
         });
@@ -83,17 +88,14 @@ describe("/api", function() {
         .expect(200)
         .then(({ body: { comments } }) => {
           const [comment] = comments;
-          const expCommentKeys = ["body", "belongs_to", "created_at", "votes", "created_by"];
-          const expUserKeys = ["username", "name", "avatar_url"];
           expect(comments.length).to.equal(3);
-          expect(comment).to.include.all.keys(...expCommentKeys);
+          expect(comment).to.include.all.keys(...commentKeys);
           expect(comment.created_by.name).to.equal(userDocs[0].name);
           expect(comment.body).to.equal("There's nothing better than a good test database!");
-          expect(comment.created_by).to.have.all.keys(...expUserKeys);
+          expect(comment.created_by).to.have.all.keys(...userKeys);
         });
     });
-    it.only("get /articles/:article_id/comment_count returns number of comments for article", () => {
-      console.log(articleDocs);
+    it("get /articles/:article_id/comment_count returns number of comments for article", () => {
       const [testArticle] = articleDocs;
       return request
         .get(`/api/articles/${testArticle._id}/comment_count`)
@@ -109,13 +111,12 @@ describe("/api", function() {
         belongs_to: topicDocs[0]._id,
         created_by: userDocs[1]._id
       };
-      const expKeys = ["body", "belongs_to", "created_by"];
       return request
         .post(`/api/articles/${testArticle._id}/comments`)
         .send(testComment)
         .expect(201)
         .then(({ body: { comment } }) => {
-          expect(comment).to.include.all.keys(...expKeys);
+          expect(comment).to.include.all.keys(...commentKeys);
           expect(comment.body).to.equal(testComment.body);
         });
     });
@@ -162,20 +163,20 @@ describe("/api", function() {
       return request
         .delete(`/api/comments/${testComment._id}`)
         .expect(200)
-        .then(({ text }) => {
-          expect(text).to.equal(`doc ${testComment._id} deleted.`);
+        .then(({ body: { message, id } }) => {
+          expect(message).to.equal("comment deleted.");
+          expect(id).to.equal(testComment._id.toString());
         });
     });
     describe("/users", () => {
       it("get api/users/:username returns user by username", () => {
         const username = userDocs[0].username;
-        const expKeys = ["username", "name", "avatar_url"];
         return request
           .get(`/api/users/${username}`)
           .expect(200)
           .then(({ body: { user } }) => {
             expect(user.name).to.equal("jonny");
-            expect(user).to.include.all.keys(expKeys);
+            expect(user).to.include.all.keys(userKeys);
           });
       });
     });

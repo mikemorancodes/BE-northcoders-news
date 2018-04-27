@@ -16,13 +16,16 @@ app.use("/*", (req, res, next) => next({ status: 404 }));
 //error handling
 
 app.use((err, req, res, next) => {
-  console.log(err);
   if (err.status === 404) res.status(404).send({ msg: "page not found" });
   else next(err);
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  if (err.status === 400) res.status(400).send({ msg: err.message || "bad request" });
+  else next(err);
+});
+
+app.use((err, req, res, next) => {
   res.status(500).send({ msg: "internal server error" });
 });
 

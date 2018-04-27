@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const { articlesRouter, commentsRouter, topicsRouter, usersRouter } = require("./");
+const homePage = require("../views/home.js");
 
 router.get("/", (req, res) => {
-  res.sendFile(__dirname.replace("routers", "views/home.html"));
+  res.send(homePage);
 });
 
 router.use("/articles", articlesRouter);

@@ -16,8 +16,8 @@ function seedDB(topicData, articleData, userData) {
     })
     .then(([articleDocs, userDocs, topicDocs]) => {
       console.log(`Inserted ${articleDocs.length} articles!`);
-      const { comments, updatedArticles } = createComments(articleDocs, userDocs);
-      return Promise.all([Comment.insertMany(comments), updatedArticles, userDocs, topicDocs]);
+      const comments = createComments(articleDocs, userDocs);
+      return Promise.all([Comment.insertMany(comments), articleDocs, userDocs, topicDocs]);
     })
     .then(allDocs => {
       console.log(`Inserted ${allDocs[0].length} comments!`);
