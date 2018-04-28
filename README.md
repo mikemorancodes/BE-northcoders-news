@@ -1,139 +1,105 @@
-## Northcoders News API
+## Mike Moran's Northcoders News API
 
-### Background
+### Getting Started
 
-We will be building the API which to use in the Northcoders News Sprint during the Front End block of the course.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Our database will be MongoDB. Your Mongoose models have been created for you so that you can see what the data should look like.
+### Pre-requisites
 
-We have also built a functioning API at http://northcoders-news-api.herokuapp.com/.
+You will need the following on your machine:
 
-Look closely at the response you get for each route on http://northcoders-news-api.herokuapp.com/ You will notice that we also send data such as the comment count for each article. You will need to think carefully about how to do this in your API.
+* [NodeJS](https://nodejs.org/)
+* [MongoDB](https://www.mongodb.com/)
 
-### Mongoose Documentation
+### Installing
 
-The below are all model methods that you call on your models.
+Clone the repo and install all dependencies. Run the development seed file and start the app to begin using.
 
-* [find](http://mongoosejs.com/docs/api.html#model_Model.find)
-* [findOne](http://mongoosejs.com/docs/api.html#model_Model.findOne)
-* [findOneAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findOneAndUpdate)
-* [findOneAndRemove](http://mongoosejs.com/docs/api.html#model_Model.findOneAndRemove)
-* [findById](http://mongoosejs.com/docs/api.html#model_Model.findById)
-* [findByIdAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate)
-* [findByIdAndRemove](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove)
-* [update](http://mongoosejs.com/docs/api.html#model_Model.update)
+Clone the repo
 
-There are also some methods that can be called on the documents that get returned. These are:
-
-* [remove](http://mongoosejs.com/docs/api.html#model_Model-remove)
-* [save](http://mongoosejs.com/docs/api.html#model_Model-save)
-* [count](http://mongoosejs.com/docs/api.html#model_Model.count)
-
-### Step 1 - Seeding
-
-Data has been provided for both testing and development environments so you will need to write a seed function to seed your database. You should think about how you will write your seed file to use either test data or dev data depending on the environment that you're running in.
-
-1.  You will need to seed the topics, followed by the articles and the users. Each article should belong to a topic, referenced by a topic's \_id property. Each article should also have a random number of comments. Each comment should have been created by a random user (referenced by their \_id property) and should also belong to a specific article (referenced by its \_id property too). Use a library such as [faker](https://www.npmjs.com/package/faker) or [chance](https://www.npmjs.com/package/chance) to generate random comments.
-
-### Step 2 - Building and Testing
-
-1.  Build your Express App
-2.  Mount an API Router onto your app
-3.  Define the routes described below
-4.  Define controller functions for each of your routes
-5.  Use proper project configuration from the offset, being sure to treat development and test differently.
-6.  Test each route as you go. Remember to test the happy and the unhappy paths! Make sure your error messages are helpful and your error status codes are chosen correctly. Remember to seed the test database using the seeding function and make the saved data available to use within your test suite.
-7.  Once you have all your routes start to tackle responding with the vote and comment counts on article requests like this http://northcoders-news-api.herokuapp.com/api/articles
-
-**HINT** Make sure to drop and reseed your test database with every test. This will make it much easier to keep track of your data throughout. In order for this to work, you are going to need to keep track of the MongoIDs your seeded docs have been given. In order to do this, you might want to consider what your seed file returns, and how you can use this in your tests.
-
-### Routes
-
-``` http
-GET /api
+```
+git clone https://github.com/mikemorancodes/BE-FT-northcoders-news.git
 ```
 
-Serves an HTML page with documentation for all the available endpoints
+Install dependencies
 
-``` http
-GET /api/topics
+```
+npm install
 ```
 
-Get all the topics
+Run mongod in your terminal and leave running while using the app. Be sure to exit once finished.
 
-``` http
-GET /api/topics/:topic_id/articles
+```
+mongod
 ```
 
-Return all the articles for a certain topic
+Seed database and start app
 
-``` http
-POST /api/topics/:topic_id/articles
+```
+node seed/dev.seed.js
+npm run dev
 ```
 
-Add a new article to a topic. This route requires a JSON body with title and body key value pairs
-e.g: {
-    "title": "this is my new article title"
-    "body": "This is my new article content"
-  }
+At port 9090 you can see the API homepage with all possible CRUD requests and routes.
 
-``` http
-GET /api/articles
+```
+http://localhost:9090/api/
 ```
 
-Returns all the articles
+Or see the online version at
 
-``` http
-GET /api/articles/:article_id
+```
+https://nc-news-2018.herokuapp.com/api
 ```
 
-Get an individual article
+### Tests
 
-``` http
-GET /api/articles/:article_id/comments
+All tests check for proper communication with the database. GET requests validate express responses against test data,
+
+```javascript
+expect(firstTopicDoc.name).to.equal(topicData[0].name);
 ```
 
-Get all the comments for a individual article
+while POST, PUT and DELETE requests also check the appropriate changes in the database:
 
-``` http
-POST /api/articles/:article_id/comments
+```javascript
+//increase comment vote by 1
+expect(response.comment.votes).to.equal(commentData[0].votes + 1);
 ```
 
-Add a new comment to an article. This route requires a JSON body with a comment key and value pair
-e.g: {"comment": "This is my new comment"}
+### Running the tests
 
-``` http
-PUT /api/articles/:article_id
+To execute tests run the following command in your terminal:
+
+```
+npm test
 ```
 
-Increment or Decrement the votes of an article by one. This route requires a vote query of 'up' or 'down'
-e.g: /api/articles/:article_id?vote=up
+### Deployment
 
-``` http
-PUT /api/comments/:comment_id
-```
+The app has been deployed with [Heroku](https://www.heroku.com/), using [MLab](https://mlab.com) to host the database.
 
-Increment or Decrement the votes of a comment by one. This route requires a vote query of 'up' or 'down'
-e.g: /api/comments/:comment_id?vote=down
+### Built With
 
-``` http
-DELETE /api/comments/:comment_id
-```
+* Express - The web framework used
+* Mongoose - For interaction with the database
+* Faker - Content generator
+* Lodash - Utility functions
+* Body-parser - For handling POST requests
+* Nodemon - For restarting server when modifications are made and saved
 
-Deletes a comment
+And for testing:
 
-``` http
-GET /api/users/:username
-```
+* Mocha - Testing framework
+* Chai - Assertion library paired with Mocha
+* Supertest - For making http requests and assertions
 
-Returns a JSON object with the profile data for the specified user.
+### Author
 
-### Step 3 - Hosting
+[Mike Moran](github.com/mikemorancodes)
 
-Once you are happy with your seed/dev file, prepare your project for production. You will need to seed the development data to mLab, and host the API on Heroku. If you've forgotten how to do this, you may want to look at this tutorial! https://www.sitepoint.com/deploy-rest-api-in-30-mins-mlab-heroku/
+### Acknowledgments
 
-### Step 4 - Preparing for your review and portfolio
-
-Finally, you should write a README for this project (and remove this one). The README should be broken down like this: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-
-It should also include the link where your herokuapp is hosted.
+Many thanks to Northcoders, without which this API would not be possible.
+Huge appreciation to the tutors at Northcoders for their help with coding headaches, especially Sam Caine for his enthusiasm and encouragement.
+A big shout out to [DJWadds](https://github.com/DJWadds) for his elegant solution to a seeding problem with article comment counts.
