@@ -16,3 +16,12 @@ exports.createUser = (req, res, next) => {
     .then(user => res.status(201).send({ user }))
     .catch(err => next({ status: 400, message: "invalid parameters" }));
 };
+
+exports.validatePassword = (req, res, next) => {
+  User.findOne({ username: req.params.username }).then(
+    user =>
+      req.params.password === user.password
+        ? res.send({ user }).select("-password")
+        : next({ status: 400, message: "invalid password" })
+  );
+};
